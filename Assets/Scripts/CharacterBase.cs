@@ -21,6 +21,8 @@ public class CharacterBase : MonoBehaviour
 
     private Animator characterAnimator = null;
 
+    private Vector3Int previousVector3;
+
     private const string Walk = "Walk";
 
     private const string Attack = "Attack";
@@ -33,6 +35,10 @@ public class CharacterBase : MonoBehaviour
     // Update is called once per frame
     public virtual void Update()
     {
+        
+        //characterAnimator.SetBool(Attack, false);
+        //characterAnimator.SetTrigger("Clicked");
+
         var FloorToIntPos = Vector3Int.FloorToInt(this.transform.position);
         if (this.transform.position != FloorToIntPos)
         {
@@ -50,6 +56,9 @@ public class CharacterBase : MonoBehaviour
                 {
                     this.transform.position += Vector3Int.left;
                     AnimationExecution(Walk, Vector3Int.left);
+                    previousVector3 = Vector3Int.left;
+                    characterAnimator.SetBool(Attack, false);
+                    characterAnimator.SetTrigger("Clicked");
                 }
                 break;
 
@@ -59,6 +68,9 @@ public class CharacterBase : MonoBehaviour
                 {
                     this.transform.position += Vector3Int.up;
                     AnimationExecution(Walk, Vector3Int.up);
+                    previousVector3 = Vector3Int.up;
+                    characterAnimator.SetBool(Attack, false);
+                    characterAnimator.SetTrigger("Clicked");
                 }
                 break;
 
@@ -68,6 +80,9 @@ public class CharacterBase : MonoBehaviour
                 {
                     this.transform.position += Vector3Int.right;
                     AnimationExecution(Walk, Vector3Int.right);
+                    previousVector3 = Vector3Int.right;
+                    characterAnimator.SetBool(Attack, false);
+                    characterAnimator.SetTrigger("Clicked");
                 }
                 break;
 
@@ -77,15 +92,20 @@ public class CharacterBase : MonoBehaviour
                 {
                     this.transform.position += Vector3Int.down;
                     AnimationExecution(Walk, Vector3Int.down);
+                    previousVector3 = Vector3Int.down;
+                    characterAnimator.SetBool(Attack, false);
+                    characterAnimator.SetTrigger("Clicked");
                 }
                 break;
         }
         Arrows = Arrow.Invalide;
 
-        Vector3Int cur = new Vector3Int(0, 0, 0);
+        Vector3Int curVector3 = previousVector3;
         if (IsPushedSpase)
         {
-            AnimationExecution(Attack, cur);
+            AnimationExecution(Attack, curVector3);
+            Debug.Log("IsIs");
+            
         }
         IsPushedSpase = false;
 
