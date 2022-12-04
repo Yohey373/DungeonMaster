@@ -25,6 +25,10 @@ public class CharacterBase : MonoBehaviour
 
     private const string Attack = "Attack";
 
+    private float animationNormalizedTime = 0;
+
+    private Vector3Int characterDirection = Vector3Int.zero;
+
     private void Awake()
     {
         characterAnimator = this.gameObject.GetComponentInChildren<Animator>();
@@ -48,7 +52,8 @@ public class CharacterBase : MonoBehaviour
                 // ¶‚ÉˆÚ“®
                 if (CheckPos(FloorToIntPos += Vector3Int.left))
                 {
-                    this.transform.position += Vector3Int.left;
+                    characterDirection = Vector3Int.left;
+                    this.transform.position += characterDirection;
                     AnimationExecution(Walk, Vector3Int.left);
                 }
                 break;
@@ -57,7 +62,8 @@ public class CharacterBase : MonoBehaviour
                 // ã‚ÉˆÚ“®
                 if (CheckPos(FloorToIntPos += Vector3Int.up))
                 {
-                    this.transform.position += Vector3Int.up;
+                    characterDirection = Vector3Int.up;
+                    this.transform.position += characterDirection;
                     AnimationExecution(Walk, Vector3Int.up);
                 }
                 break;
@@ -66,7 +72,8 @@ public class CharacterBase : MonoBehaviour
                 // ‰º‚ÉˆÚ“®
                 if (CheckPos(FloorToIntPos += Vector3Int.right))
                 {
-                    this.transform.position += Vector3Int.right;
+                    characterDirection = Vector3Int.right;
+                    this.transform.position += characterDirection;
                     AnimationExecution(Walk, Vector3Int.right);
                 }
                 break;
@@ -75,19 +82,23 @@ public class CharacterBase : MonoBehaviour
                 // ‰º‚ÉˆÚ“®
                 if (CheckPos(FloorToIntPos += Vector3Int.down))
                 {
-                    this.transform.position += Vector3Int.down;
+                    characterDirection = Vector3Int.down;
+                    this.transform.position += characterDirection;
                     AnimationExecution(Walk, Vector3Int.down);
                 }
                 break;
         }
         Arrows = Arrow.Invalide;
 
-        Vector3Int cur = new Vector3Int(0, 0, 0);
+        //Vector3Int cur = new Vector3Int(0, 0, 0);
         if (IsPushedSpase)
         {
-            AnimationExecution(Attack, cur);
+            AnimationExecution(Attack, characterDirection);
+            IsPushedSpase = false;
         }
-        IsPushedSpase = false;
+        
+
+        animationNormalizedTime =characterAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime;
 
     }
 
@@ -101,11 +112,35 @@ public class CharacterBase : MonoBehaviour
         IsPushedSpase = isPushed;
     }
 
+    public void LookToDirection(Vector3Int direction)
+    {
+        characterAnimator.SetFloat("X", direction.x);
+        characterAnimator.SetFloat("Y", direction.y);
+    }
+
     private void AnimationExecution(string animationName, Vector3Int direction)
     {
         characterAnimator.SetBool(animationName, true);
         characterAnimator.SetFloat("X", direction.x);
         characterAnimator.SetFloat("Y", direction.y);
+        characterAnimator.SetTrigger("Clicked");
+
+        if (animationName == Attack)
+        {
+            StartCoroutine(AttackAnimationEnd());
+        }
+        else
+        {
+            characterAnimator.SetBool(Attack,false);
+            characterAnimator.SetTrigger("Clicked");
+        }
+
+    }
+
+    private IEnumerator AttackAnimationEnd()
+    {
+        yield return new WaitUntil(()=>animationNormalizedTime > 1);
+        characterAnimator.SetBool(Attack, false);
         characterAnimator.SetTrigger("Clicked");
     }
 
