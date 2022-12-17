@@ -37,6 +37,8 @@ public class MapGenerator : MonoBehaviour
 
     public RuleTile potion;
 
+    public RuleTile exit;
+
     //mapは外からアクセスはできるが、このクラス以外でセットすることができなくする。
     public static int[,] map
     {
@@ -47,7 +49,7 @@ public class MapGenerator : MonoBehaviour
     internal int internalA = 0;
     enum Count {ZERO = 0, ONE = 1}
 
-    private void Start()
+    private void Awake()
     {
         // mapを作成する。
         map = new int[width, height];
@@ -270,7 +272,7 @@ public class MapGenerator : MonoBehaviour
                 }
                 if (map[x, y] == (int)DungeonmapType.NextStagePos)
                 {
-                    OuterTilemap.SetTile(new Vector3Int(x, y, 0), Tiles[3]);
+                    OuterTilemap.SetTile(new Vector3Int(x, y, 0), exit);
                 }
                 if (map[x, y] == (int)DungeonmapType.Portion)
                 {
