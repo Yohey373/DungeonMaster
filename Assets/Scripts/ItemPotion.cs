@@ -13,10 +13,9 @@ public class ItemPotion : MonoBehaviour
     [SerializeField]
     private int healAmount;
 
-    // Start is called before the first frame update
     private void Awake()
     {
-        Potion = new PotionBase(potionName, ItemBase.ItemTypes.Potion, healAmount);
+        Potion = new PotionBase(potionName, ItemBase.ItemTypes.Portion, healAmount);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -24,18 +23,16 @@ public class ItemPotion : MonoBehaviour
         if (collision.gameObject.GetComponent<PlayerParameterBase>())
         {
             var playerParam = collision.gameObject.GetComponent<PlayerParameterBase>();
-            playerParam.PlayerParameter.Heal(Potion.GetHealAmount);
-
+            playerParam.Heal(Potion.GetHealAmount);
             var transformInt = Vector3Int.FloorToInt(this.transform.position);
             StartCoroutine(EraseItemPotionTile(transformInt));
-            Debug.Log("TriggerEnter");
         }
     }
 
-    private IEnumerator EraseItemPotionTile(Vector3Int transformInt)
-    {
+    // アイテム：ポーションを削除する
+    private IEnumerator EraseItemPotionTile(Vector3Int transformInt) {
+        // 1フレームが終わるまで待つ
         yield return new WaitForEndOfFrame();
         this.transform.parent.GetComponent<Tilemap>().SetTile(transformInt, null);
     }
-
 }

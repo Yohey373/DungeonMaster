@@ -1,15 +1,27 @@
 public class CharacterParameterBase
 {
-    public float HitPoint;
-    private float maxHitPoint;
-    public float AttackPoint;
+    protected float HitPoint;
+    protected float maxHitPoint;
+    protected float AttackPoint;
 
-    public CharacterParameterBase(float hitPoint, float attackPoint)
+    public float GetAttackPoint {
+
+        get { return AttackPoint; }
+    }
+
+    public float GetHitPoint
+    {
+
+        get { return HitPoint; }
+    }
+
+/*    public CharacterParameterBase(float hitPoint, float attackPoint)
     {
         this.HitPoint = hitPoint;
         this.maxHitPoint = this.HitPoint;
         this.AttackPoint = attackPoint;
     }
+*/
 
     public void Damage(float damagePoint)
     {
@@ -27,6 +39,11 @@ public class CharacterParameterBase
         {
             this.HitPoint = this.maxHitPoint;
         }
+    }
+
+    public bool isDead() {
+
+        return this.HitPoint <= 0;
     }
 
 }

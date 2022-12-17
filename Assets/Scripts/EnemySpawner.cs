@@ -4,16 +4,11 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    public GameObject Enemy;
 
-/*    public void EnemySpawn()
-    {
-        foreach (var pos in MapGenerator.EnemyPos)
-        {
-            var enemy = Instantiate(Enemy);
+    public GameObject[] Enemy = new GameObject[2];
 
-            enemy.transform.position = pos;
-        }
+    public void EnemySpawn(Vector2 spawnPos, EnemyParameterBase.EnemyType enemyType) {
+        var enemy = Instantiate(Enemy[(int)enemyType]);
+        enemy.transform.position = spawnPos;
     }
-*/
 }

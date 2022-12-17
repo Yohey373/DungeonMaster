@@ -7,17 +7,23 @@ public class PlayerCharacterBase : CharacterBase
     // Start is called before the first frame update
     void Start()
     {
-        this.transform.position = MapGenerator.startPosVector2;
+
+        this.transform.position = MapGenerator.Instance.StartPos;
+
+        int num = 8;
+        Debug.Log(num << 1);
+        Debug.Log(num << 2);
+        Debug.Log(num << 3);
+        Debug.Log(num << 4);
     }
 
     // Update is called once per frame
     public override void Update()
     {
-        if (Input.anyKeyDown)
-        {
+        if (Input.anyKeyDown) {
             GameTurnManager.PlayerActionTurnExecution();
         }
-        
+
         if (Input.GetKeyDown(KeyCode.A))
         {
             base.SetArrowState(Arrow.Left);
@@ -34,15 +40,9 @@ public class PlayerCharacterBase : CharacterBase
         {
             base.SetArrowState(Arrow.Right);
         }
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            base.SetSpaceState(true);
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            base.IsAttack = true;
         }
         base.Update();
-    }
-
-    private void LateUpdate()
-    {
-        GameTurnManager.PlayerActionTurnEnd();
     }
 }
