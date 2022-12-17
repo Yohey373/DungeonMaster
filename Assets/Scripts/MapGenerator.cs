@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.Tilemaps;
+using UnityEngine.UIElements;
 
-public class MapGenerator : MonoBehaviour
+public class MapGenerator : SingletonMonoBehaviour<MapGenerator>
 {
     [SerializeField]
     private int width = 20;
@@ -12,17 +14,20 @@ public class MapGenerator : MonoBehaviour
     private int height = 20;
 
     //DungeonMapのタイプを選定する
-    private enum DungeonmapType
+    private enum DungeonMapType
     {
         Floor = 0,
         Wall =1,
         StartPos = 2,
         Portion = 3,
+        TreasureBox = 4,
+        RetirePoint = 5,
         NextStagePos = 999,
     }
     private System.Random rand = null;
 
     private int reqFloorAmount = 0;
+    [Tooltip("The Tilemap to draw onto")]
 
     public static Vector2 startPosVector2 = new Vector2(0, 0);
 
@@ -39,6 +44,10 @@ public class MapGenerator : MonoBehaviour
 
     public RuleTile exit;
 
+    public RuleTile TreasureBox;
+
+    public RuleTile RetirePoint;
+
     //mapは外からアクセスはできるが、このクラス以外でセットすることができなくする。
     public static int[,] map
     {
@@ -49,8 +58,15 @@ public class MapGenerator : MonoBehaviour
     internal int internalA = 0;
     enum Count {ZERO = 0, ONE = 1}
 
-    private void Awake()
+    public Vector2 StartPos = Vector2.zero;
+
+    public override void Awake()
     {
+        
+         // シーンの中だけのSingletonとするのでflagを立てる
+        isSceneinSingleton = true;
+        base.Awake();
+
         // mapを作成する。
         map = new int[width, height];
         // mapを埋める
@@ -61,7 +77,7 @@ public class MapGenerator : MonoBehaviour
             // GetUpperBound(1)は二次元配列の二次元目の最後の場所を返す
             for (int y = 0; y < height; y++)
             {
-                map[x, y] = (int)DungeonmapType.Wall;
+                map[x, y] = (int)DungeonMapType.Wall;
             }
         }
         // seedを決めます。Randomにしたい場合はTime.timeなどが一般的。
@@ -103,6 +119,18 @@ public class MapGenerator : MonoBehaviour
             portionPos = rand.Next(reqFloorAmount);
         }
 */
+
+        var enemyPos = rand.Next(reqFloorAmount);
+
+        var treasureBoxPos = rand.Next(reqFloorAmount);
+
+        var retirePoint = -1;
+        // DungeonHierarchyCounterに記録されているクリア階層が5の倍数(5で割り切れる)ならRetirePointを生成する
+        if (DungeonHierarchyCounter.Instance.GetDungeonHierarchyCount % 5 == 0)
+        {
+            retirePoint = rand.Next(reqFloorAmount);
+        }
+
         // カウントを0からスタートさせたいので-1からカウントアップさせていく。
         var posCount = -1;
         // GetUpperBound(0)はその次元の最後の値の場所を返す
@@ -116,17 +144,31 @@ public class MapGenerator : MonoBehaviour
                     posCount++;
                     if (posCount == startPos)
                     {
-                        map[x, y] = (int)DungeonmapType.StartPos;
+                        map[x, y] = (int)DungeonMapType.StartPos;
                         startPosVector2 = new Vector2(x, y);
                         Debug.Log($"generator{x},{y}");
                     }
                     if (posCount == nextStagePos)
                     {
-                        map[x, y] = (int)DungeonmapType.NextStagePos;
+                        map[x, y] = (int)DungeonMapType.NextStagePos;
                     }
                     if (posCount == portionPos)
                     {
-                        map[x, y] = (int)DungeonmapType.Portion;
+                        map[x, y] = (int)DungeonMapType.Portion;
+                    }
+
+                    if (posCount == treasureBoxPos)
+                    {
+                        map[x, y] = (int)DungeonMapType.TreasureBox;
+                    }
+
+                    // リタイアポイントが設定されていた場合
+                    if (retirePoint != -1)
+                    {
+                        if (posCount == retirePoint) {
+                            map[x, y] = (int)DungeonMapType.RetirePoint;
+                        }
+
                     }
                 }
             }
@@ -185,7 +227,7 @@ public class MapGenerator : MonoBehaviour
                         if (map[floorX, floorY] == 1)
                         {
                             //Change it to not a tile
-                            map[floorX, floorY] = (int)DungeonmapType.Floor;
+                            map[floorX, floorY] = (int)DungeonMapType.Floor;
                             //Increase floor count
                             floorCount++;
                         }
@@ -201,7 +243,7 @@ public class MapGenerator : MonoBehaviour
                         if (map[floorX, floorY] == 1)
                         {
                             //Change it to not a tile
-                            map[floorX, floorY] = (int)DungeonmapType.Floor;
+                            map[floorX, floorY] = (int)DungeonMapType.Floor;
                             //Increase the floor count
                             floorCount++;
                         }
@@ -217,7 +259,7 @@ public class MapGenerator : MonoBehaviour
                         if (map[floorX, floorY] == 1)
                         {
                             //Change it to not a tile
-                            map[floorX, floorY] = (int)DungeonmapType.Floor;
+                            map[floorX, floorY] = (int)DungeonMapType.Floor;
                             //Increase the floor count
                             floorCount++;
                         }
@@ -233,7 +275,7 @@ public class MapGenerator : MonoBehaviour
                         if (map[floorX, floorY] == 1)
                         {
                             //Change it to not a tile
-                            map[floorX, floorY] = (int)DungeonmapType.Floor;
+                            map[floorX, floorY] = (int)DungeonMapType.Floor;
                             //Increase the floor count
                             floorCount++;
                         }
@@ -258,25 +300,36 @@ public class MapGenerator : MonoBehaviour
         {
             for (int y = 0; y < height; y++) // Loop through the height of the map
             {
-                if (map[x, y] == (int)DungeonmapType.Floor)
+                if (map[x, y] == (int)DungeonMapType.Floor)
                 {
                     GroundTilemap.SetTile(new Vector3Int(x, y, 0), Tiles[0]);
                 }
-                if (map[x, y] == (int)DungeonmapType.Wall)
+                if (map[x, y] == (int)DungeonMapType.Wall)
                 {
                     WallTilemap.SetTile(new Vector3Int(x, y, 0), Tiles[1]);
                 }
-                if (map[x, y] == (int)DungeonmapType.StartPos)
+                if (map[x, y] == (int)DungeonMapType.StartPos)
                 {
                     OuterTilemap.SetTile(new Vector3Int(x, y, 0), Tiles[2]);
                 }
-                if (map[x, y] == (int)DungeonmapType.NextStagePos)
+                if (map[x, y] == (int)DungeonMapType.NextStagePos)
                 {
                     OuterTilemap.SetTile(new Vector3Int(x, y, 0), exit);
                 }
-                if (map[x, y] == (int)DungeonmapType.Portion)
+                if (map[x, y] == (int)DungeonMapType.Portion)
                 {
                     OuterTilemap.SetTile(new Vector3Int(x, y, 0), potion);
+                    GroundTilemap.SetTile(new Vector3Int(x, y, 0), Tiles[0]);
+                }
+                if (map[x, y] == (int)DungeonMapType.TreasureBox)
+                {
+                    OuterTilemap.SetTile(new Vector3Int(x, y, 0), TreasureBox);
+                    GroundTilemap.SetTile(new Vector3Int(x, y, 0), Tiles[0]);
+                }
+
+                if (map[x, y] == (int)DungeonMapType.RetirePoint)
+                {
+                    OuterTilemap.SetTile(new Vector3Int(x, y, 0), RetirePoint);
                     GroundTilemap.SetTile(new Vector3Int(x, y, 0), Tiles[0]);
                 }
             }

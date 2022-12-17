@@ -2,25 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerParameterBase : MonoBehaviour
+public class PlayerParameterBase : CharacterParameterBase
 {
-    public CharacterParameterBase PlayerParameter;
+    [SerializeField]
+    private int playerHitPoint;
 
     [SerializeField]
-    private int hitPoint;
+    private int playerAttackPoint;
 
-    [SerializeField]
-    private int attackPoint;
-
-    // Start is called before the first frame update
     private void Awake()
     {
-        PlayerParameter = new CharacterParameterBase(hitPoint, attackPoint);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        base.HitPoint = playerHitPoint;
+        base.maxHitPoint = base.HitPoint;
+        base.AttackPoint = playerAttackPoint;
     }
 }

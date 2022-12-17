@@ -4,17 +4,10 @@ using UnityEngine;
 
 public class GameTurnManager : MonoBehaviour
 {
-    
-    public static bool playerAction = false;
-    
+    public static int playerActionCount = 0;
+
     public static void PlayerActionTurnExecution()
     {
-        playerAction = true;
+        playerActionCount++;
     }
-
-    public static void PlayerActionTurnEnd()
-    {
-        playerAction = false;
-    }
-
 }

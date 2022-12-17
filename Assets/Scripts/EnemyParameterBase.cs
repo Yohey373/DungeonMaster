@@ -2,25 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyParameterBase : MonoBehaviour
+public class EnemyParameterBase : CharacterParameterBase
 {
-    public CharacterParameterBase EnemyCharacterParameter;
-
-    [SerializeField]
-    private int hitPoint;
-
-    [SerializeField]
-    private int attackPoint;
-
-    // Start is called before the first frame update
-    private void Awake()
-    {
-        EnemyCharacterParameter = new CharacterParameterBase(hitPoint, attackPoint);
+    public enum EnemyType {
+        Invalide =-1,
+        Normal,
+        High
     }
 
-    // Update is called once per frame
-    void Update()
+    [SerializeField]
+    private float enemyHitPoint;
+
+    [SerializeField]
+    private float enemyAttackPoint;
+
+    private void Awake()
     {
-        
+        base.HitPoint = enemyAttackPoint;
+        base.maxHitPoint = base.HitPoint;
+        base.AttackPoint = enemyAttackPoint;
     }
 }

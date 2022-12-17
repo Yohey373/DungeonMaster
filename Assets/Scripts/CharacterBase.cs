@@ -17,7 +17,7 @@ public class CharacterBase : MonoBehaviour
     }
     public Arrow Arrows = Arrow.Invalide;
 
-    public bool IsPushedSpase = false;
+    public bool IsAttack = false;
 
     private Animator characterAnimator = null;
 
@@ -29,6 +29,15 @@ public class CharacterBase : MonoBehaviour
 
     private Vector3Int characterDirection = Vector3Int.zero;
 
+    private string currentAnimationName = string.Empty;
+
+    protected bool isEnemy = false;
+
+    // 動いて良いというフラグ
+    public bool isActive = true;
+
+    public CharacterParameterBase characterParameter;
+
     private void Awake()
     {
         characterAnimator = this.gameObject.GetComponentInChildren<Animator>();
@@ -37,6 +46,15 @@ public class CharacterBase : MonoBehaviour
     // Update is called once per frame
     public virtual void Update()
     {
+        // フラグが折れている場合は操作不能にする
+        if (!isActive) {
+            return;
+        }
+
+        if (characterParameter.isDead()) {
+            Debug.Log($"{this.name}:死んだ");
+        }
+        
         var FloorToIntPos = Vector3Int.FloorToInt(this.transform.position);
         if (this.transform.position != FloorToIntPos)
         {
@@ -49,7 +67,7 @@ public class CharacterBase : MonoBehaviour
                 break;
 
             case Arrow.Left:
-                // ���Ɉړ�
+                // ���Ɉړ�
                 if (CheckPos(FloorToIntPos += Vector3Int.left))
                 {
                     characterDirection = Vector3Int.left;
@@ -59,7 +77,7 @@ public class CharacterBase : MonoBehaviour
                 break;
 
             case Arrow.Up:
-                // ��Ɉړ�
+                // ��Ɉړ�
                 if (CheckPos(FloorToIntPos += Vector3Int.up))
                 {
                     characterDirection = Vector3Int.up;
@@ -69,7 +87,7 @@ public class CharacterBase : MonoBehaviour
                 break;
 
             case Arrow.Right:
-                // ���Ɉړ�
+                // ���Ɉړ�
                 if (CheckPos(FloorToIntPos += Vector3Int.right))
                 {
                     characterDirection = Vector3Int.right;
@@ -79,7 +97,7 @@ public class CharacterBase : MonoBehaviour
                 break;
 
             case Arrow.Down:
-                // ���Ɉړ�
+                // ���Ɉړ�
                 if (CheckPos(FloorToIntPos += Vector3Int.down))
                 {
                     characterDirection = Vector3Int.down;
@@ -91,10 +109,10 @@ public class CharacterBase : MonoBehaviour
         Arrows = Arrow.Invalide;
 
         //Vector3Int cur = new Vector3Int(0, 0, 0);
-        if (IsPushedSpase)
+        if (IsAttack)
         {
             AnimationExecution(Attack, characterDirection);
-            IsPushedSpase = false;
+            IsAttack = false;
         }
         
 
@@ -109,17 +127,19 @@ public class CharacterBase : MonoBehaviour
 
     protected void SetSpaceState(bool isPushed)
     {
-        IsPushedSpase = isPushed;
+        IsAttack = isPushed;
     }
 
     public void LookToDirection(Vector3Int direction)
     {
         characterAnimator.SetFloat("X", direction.x);
         characterAnimator.SetFloat("Y", direction.y);
+        characterDirection = direction;
     }
 
     private void AnimationExecution(string animationName, Vector3Int direction)
     {
+        currentAnimationName = animationName;
         characterAnimator.SetBool(animationName, true);
         characterAnimator.SetFloat("X", direction.x);
         characterAnimator.SetFloat("Y", direction.y);
@@ -127,7 +147,7 @@ public class CharacterBase : MonoBehaviour
 
         if (animationName == Attack)
         {
-            StartCoroutine(AttackAnimationEnd());
+            StartCoroutine(AttackAnimationExecution());
         }
         else
         {
@@ -137,14 +157,57 @@ public class CharacterBase : MonoBehaviour
 
     }
 
+/*
     private IEnumerator AttackAnimationEnd()
     {
         yield return new WaitUntil(()=>animationNormalizedTime > 1);
         characterAnimator.SetBool(Attack, false);
         characterAnimator.SetTrigger("Clicked");
     }
+*/
 
-    // �i�ސ�ɕǂ��Ȃ������`�F�b�N����
+    // 攻撃のアニメーションの時にダメージを負わせる実装
+    private IEnumerator AttackAnimationExecution() {
+        var opponentFace = Vector3.zero;
+        opponentFace = characterDirection;
+        // アニメーションの途中で
+        yield return new WaitUntil(() => animationNormalizedTime > 0.5f);
+
+        if (isEnemy)
+        {
+            // 敵の場合はプレイヤーに対して当てるRayを放つ
+            int layerNo = LayerMask.NameToLayer("Player");
+            // マスクへの変換（ビットシフト）
+            int layerMask = 1 << layerNo;
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, opponentFace, 1.5f, layerMask);
+            Debug.Log(layerMask);
+            if (hit.collider != null)
+            {
+                hit.transform.GetComponent<CharacterParameterBase>().Damage(characterParameter.GetAttackPoint);
+                Debug.Log($"{hit.transform.name}:{hit.transform.GetComponent<CharacterParameterBase>().GetHitPoint}");
+            }
+        }
+        else {
+            int layerNo = LayerMask.NameToLayer("Enemy");
+            // マスクへの変換（ビットシフト）
+            int layerMask = 1 << layerNo;
+            // プレイヤーが敵に攻撃するばあい
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, opponentFace, 1.5f, layerMask);
+            if (hit.collider != null )
+            {
+                hit.collider.transform.parent.GetComponent<CharacterParameterBase>().Damage(characterParameter.GetAttackPoint);
+                Debug.Log($"{hit.transform.name}:{hit.transform.GetComponent<CharacterParameterBase>().GetHitPoint}");
+            }
+        }
+
+
+        yield return new WaitUntil(()=>animationNormalizedTime > 1);
+        characterAnimator.SetBool(Attack, false);
+        characterAnimator.SetTrigger("Clicked");
+    }
+
+
+    // �i�ސ�ɕǂ��Ȃ������`�F�b�N����
     private bool CheckPos(Vector3 vec)
     {
         if (MapGenerator.map[(int)vec.x, (int)vec.y] == 1)

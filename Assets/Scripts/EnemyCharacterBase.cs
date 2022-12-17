@@ -11,7 +11,8 @@ public class EnemyCharacterBase : CharacterBase
 
     private int chaseDirection = 0;
     float playerDiff = 10f;
-    
+
+    private int enemyActionCount = 0;
 
     private Vector2 startPos = new Vector2(0, 0);
 
@@ -31,14 +32,14 @@ public class EnemyCharacterBase : CharacterBase
         var enemyPos = rand.Next(reqFloorAmount);
         Debug.Log(enemyPos);
 
-        // ƒJƒEƒ“ƒg‚ğ0‚©‚çƒXƒ^[ƒg‚³‚¹‚½‚¢‚Ì‚Å-1‚©‚çƒJƒEƒ“ƒgƒAƒbƒv‚³‚¹‚Ä‚¢‚­B
+        // ï¿½Jï¿½Eï¿½ï¿½ï¿½gï¿½ï¿½0ï¿½ï¿½ï¿½ï¿½Xï¿½^ï¿½[ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì‚ï¿½-1ï¿½ï¿½ï¿½ï¿½Jï¿½Eï¿½ï¿½ï¿½gï¿½Aï¿½bï¿½vï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½B
         var posCount = -1;
-        // GetUpperBound(0)‚Í‚»‚ÌŸŒ³‚ÌÅŒã‚Ì’l‚ÌêŠ‚ğ•Ô‚·
+        // GetUpperBound(0)ï¿½Í‚ï¿½ï¿½Ìï¿½ï¿½ï¿½ï¿½ÌÅŒï¿½Ì’lï¿½ÌêŠï¿½ï¿½Ô‚ï¿½
         for (int x = 0; x < MapGenerator.map.GetUpperBound(0); x++)
         {
             for (int y = 0; y < MapGenerator.map.GetUpperBound(1); y++)
             {
-                // map‚ÌÀ•W‚ª‹ó‚¢‚Ä‚¢‚ê‚ÎstartPos‚ÆnextStagePos‚Ìê‡‚É‚»‚±‚ÌÀ•W‚ğ•ÏX‚·‚é
+                // mapï¿½Ìï¿½ï¿½Wï¿½ï¿½ï¿½ó‚¢‚Ä‚ï¿½ï¿½ï¿½ï¿½startPosï¿½ï¿½nextStagePosï¿½Ìê‡ï¿½É‚ï¿½ï¿½ï¿½ï¿½Ìï¿½ï¿½Wï¿½ï¿½ÏXï¿½ï¿½ï¿½ï¿½
                 if (MapGenerator.map[x, y] == 0)
                 {
                     posCount++;
@@ -61,25 +62,25 @@ public class EnemyCharacterBase : CharacterBase
             playerDiff = (collision.transform.position - this.transform.position).magnitude;
             var face = Vector3Int.zero;
 
-            // ©•ª‚æ‚è¶‚ÉƒvƒŒƒCƒ„[‚ª‚¢‚é
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è¶ï¿½Éƒvï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             if (v.x < 0)
             {
                 chaseDirection = (int)Arrow.Left;
                 face = Vector3Int.left;
             }
-            // ©•ª‚æ‚è‰E‚ÉƒvƒŒƒCƒ„[‚ª‚¢‚é
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Eï¿½Éƒvï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             if (v.x > 0)
             {
                 chaseDirection = (int)Arrow.Right;
                 face = Vector3Int.right;
             }
-            // ©•ª‚æ‚è‰º‚ÉƒvƒŒƒCƒ„[‚ª‚¢‚é
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è‰ºï¿½Éƒvï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             if (v.y < 0)
             {
                 chaseDirection = (int)Arrow.Down;
                 face = Vector3Int.down;
             }
-            // ©•ª‚æ‚èã‚ÉƒvƒŒƒCƒ„[‚ª‚¢‚é
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éƒvï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             if (v.y > 0)
             {
                 chaseDirection = (int)Arrow.Up;
@@ -92,7 +93,7 @@ public class EnemyCharacterBase : CharacterBase
         }
     }
 
-    // õ“G”ÍˆÍ‚©‚ço‚½ê‡‚Í’ÇÕƒ‚[ƒh‚ğŠO‚·
+    // ï¿½ï¿½ï¿½Gï¿½ÍˆÍ‚ï¿½ï¿½ï¿½oï¿½ï¿½ï¿½ê‡ï¿½Í’ÇÕƒï¿½ï¿½[ï¿½hï¿½ï¿½ï¿½Oï¿½ï¿½
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.GetComponent<PlayerParameterBase>())
@@ -103,14 +104,14 @@ public class EnemyCharacterBase : CharacterBase
     
     public override void Update()
     {
-        if (GameTurnManager.playerAction)
+        if (GameTurnManager.playerActionCount != enemyActionCount)
         {
-
+            enemyActionCount++;
             if (isChase)
             {
                 if (playerDiff <= 2)
                 {
-                    base.IsPushedSpase = true;
+                    base.IsAttack = true;
                 }
                 else
                 {
@@ -134,7 +135,7 @@ public class EnemyCharacterBase : CharacterBase
                     base.SetArrowState(Arrow.Right);
                     break;
                 case 4:
-                    base.IsPushedSpase = true;
+                    base.IsAttack = true;
                     break;
             }
         }
