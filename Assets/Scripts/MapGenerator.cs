@@ -179,6 +179,8 @@ public class MapGenerator : SingletonMonoBehaviour<MapGenerator>
         }
 
         RenderMap(map);
+
+        StartCoroutine(SetHighOrcSpawn());
     }
     
     /// <summary>
@@ -340,5 +342,10 @@ public class MapGenerator : SingletonMonoBehaviour<MapGenerator>
         }
     }
 
+    IEnumerator SetHighOrcSpawn() {
+
+        yield return new WaitUntil(()=>GameTurnManager.playerActionCount > 10);
+        this.GetComponent<EnemySpawner>().EnemySpawn(StartPos, EnemyParameterBase.EnemyType.High);
+    }
 
 }
