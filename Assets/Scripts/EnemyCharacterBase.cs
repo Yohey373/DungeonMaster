@@ -52,7 +52,13 @@ public class EnemyCharacterBase : CharacterBase
             }
         }
         */
-         this.transform.position = MapGenerator.Instance.EnemyPos;
+        
+        base.isEnemy = true;
+
+        this.enemyActionCount = GameTurnManager.playerActionCount;
+        
+        this.transform.position = MapGenerator.Instance.EnemyPos;
+
     }
     
     private void OnTriggerStay2D(Collider2D collision)
