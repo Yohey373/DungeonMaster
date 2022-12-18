@@ -41,6 +41,7 @@ public class CharacterBase : MonoBehaviour
     private void Awake()
     {
         characterAnimator = this.gameObject.GetComponentInChildren<Animator>();
+        characterParameter = this.gameObject.GetComponentInChildren<CharacterParameterBase>();
     }
 
     // Update is called once per frame

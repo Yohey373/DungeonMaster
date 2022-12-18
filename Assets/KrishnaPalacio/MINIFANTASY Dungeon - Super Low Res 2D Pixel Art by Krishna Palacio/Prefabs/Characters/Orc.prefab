@@ -303,7 +303,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Arrows: -1
-  IsPushedSpase: 0
+  IsAttack: 0
+  isActive: 1
+  characterParameter: {fileID: 0}
   seed: 5
 --- !u!114 &2535136787297033785
 MonoBehaviour:
@@ -317,5 +319,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 597a3db30d4ee9148b32d1091bac868f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitPoint: 0
-  attackPoint: 0
+  enemyHitPoint: 10
+  enemyAttackPoint: 2

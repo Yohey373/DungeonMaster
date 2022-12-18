@@ -21,7 +21,7 @@ public class EnemyCharacterBase : CharacterBase
 
     void Start()
     {
-
+/*
         if (rand == null)
         {
             rand = new System.Random(seed.GetHashCode());
@@ -51,11 +51,13 @@ public class EnemyCharacterBase : CharacterBase
                 }
             }
         }
+        */
+         this.transform.position = MapGenerator.Instance.EnemyPos;
     }
     
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.gameObject.GetComponent<PlayerParameterBase>())
+        if (collision.gameObject.GetComponent<PlayerCharacterBase>())
         {
             isChase = true;
             Vector3 v = (collision.transform.position - this.transform.position).normalized;
@@ -96,7 +98,7 @@ public class EnemyCharacterBase : CharacterBase
     // ���G�͈͂���o���ꍇ�͒ǐՃ��[�h���O��
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.GetComponent<PlayerParameterBase>())
+        if (collision.gameObject.GetComponent<PlayerCharacterBase>())
         {
             isChase = false;
         }

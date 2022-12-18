@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
+//using UnityEngine.Rendering.Universal;
 using UnityEngine.Tilemaps;
 using UnityEngine.UIElements;
 
@@ -59,7 +59,7 @@ public class MapGenerator : SingletonMonoBehaviour<MapGenerator>
     enum Count {ZERO = 0, ONE = 1}
 
     public Vector2 StartPos = Vector2.zero;
-
+      public Vector2 EnemyPos = Vector2.zero;
     public override void Awake()
     {
         
@@ -145,7 +145,7 @@ public class MapGenerator : SingletonMonoBehaviour<MapGenerator>
                     if (posCount == startPos)
                     {
                         map[x, y] = (int)DungeonMapType.StartPos;
-                        startPosVector2 = new Vector2(x, y);
+                        StartPos = new Vector2(x, y);
                         Debug.Log($"generator{x},{y}");
                     }
                     if (posCount == nextStagePos)
@@ -161,7 +161,11 @@ public class MapGenerator : SingletonMonoBehaviour<MapGenerator>
                     {
                         map[x, y] = (int)DungeonMapType.TreasureBox;
                     }
-
+                    if (posCount == enemyPos)
+                    {
+                        EnemyPos= new Vector2(x,y);
+                        //map[x, y] = (int)DungeonMapType.Portion;
+                    }
                     // リタイアポイントが設定されていた場合
                     if (retirePoint != -1)
                     {

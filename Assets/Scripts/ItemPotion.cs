@@ -20,7 +20,8 @@ public class ItemPotion : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.GetComponent<PlayerParameterBase>())
+        //if (collision.gameObject.GetComponent<PlayerParameterBase>())
+        if (collision.transform.GetComponent<PlayerCharacterBase>())
         {
             var playerParam = collision.gameObject.GetComponent<PlayerParameterBase>();
             playerParam.Heal(Potion.GetHealAmount);
