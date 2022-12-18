@@ -383,6 +383,7 @@ GameObject:
   - component: {fileID: 519420034}
   - component: {fileID: 519420035}
   - component: {fileID: 519420036}
+  - component: {fileID: 519420037}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -481,7 +482,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b0f185ed658f0b044acf3ee2da345d40, type: 2}
   potion: {fileID: 11400000, guid: 5ab228690c6f3b94c984ffbf89461af5, type: 2}
   exit: {fileID: 11400000, guid: cedd1a586894fa14daecd3a8cb85d1b9, type: 2}
-  TreasureBox: {fileID: 0}
+  TreasureBox: {fileID: 11400000, guid: 48c9e48be6a262b489001412e6d93f4b, type: 2}
   RetirePoint: {fileID: 0}
   StartPos: {x: 0, y: 0}
   EnemyPos: {x: 0, y: 0}
@@ -543,6 +544,21 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
+--- !u!114 &519420037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 078df226ebf424248a0673fc1d9fe2cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Enemy:
+  - {fileID: 2535136787297033797, guid: 4843c6294db27f84bb07ff202205e1ea, type: 3}
+  - {fileID: 2535136787297033797, guid: 627e834a3e61df84090fbc86963725e4, type: 3}
 --- !u!1 &608040865
 GameObject:
   m_ObjectHideFlags: 0
