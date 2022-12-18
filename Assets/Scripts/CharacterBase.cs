@@ -54,6 +54,27 @@ public class CharacterBase : MonoBehaviour
 
         if (characterParameter.isDead()) {
             Debug.Log($"{this.name}:死んだ");
+            if (isEnemy)
+            {
+                // Deadのアニメーションを叩いて
+                // アニメーションが終わったら消える
+
+                gameObject.SetActive(false);
+                return;
+            }
+            else
+            {
+                // Deadのアニメーションを叩いて
+                // アニメーションが終わったら消える
+                // リザルトにとぶ
+
+
+                isActive = false;
+                gameObject.SetActive(false);
+                //SceneTransitionManager.Instance.SceneLoad("ResultScene");
+                return;
+            }
+
         }
         
         var FloorToIntPos = Vector3Int.FloorToInt(this.transform.position);

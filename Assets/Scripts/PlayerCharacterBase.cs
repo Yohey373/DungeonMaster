@@ -7,6 +7,7 @@ public class PlayerCharacterBase : CharacterBase
     // Start is called before the first frame update
     void Start()
     {
+        base.isEnemy = false;
 
         this.transform.position = MapGenerator.Instance.StartPos;
 
