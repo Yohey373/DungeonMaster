@@ -38,6 +38,14 @@ public class CharacterBase : MonoBehaviour
 
     public CharacterParameterBase characterParameter;
 
+    enum ActionState{
+        Invalide =-1,
+        Action,
+        Result,
+        Dead
+    }
+    ActionState ActionStates = ActionState.Invalide;
+
     private void Awake()
     {
         characterAnimator = this.gameObject.GetComponentInChildren<Animator>();
@@ -226,6 +234,28 @@ public class CharacterBase : MonoBehaviour
         yield return new WaitUntil(()=>animationNormalizedTime > 1);
         characterAnimator.SetBool(Attack, false);
         characterAnimator.SetTrigger("Clicked");
+    }
+
+    private IEnumerator DeadAnimationExecution()
+    {
+        Debug.Log("deadStart");
+        // アニメーターのパラメーターを初期化する
+        characterAnimator.Rebind();
+        characterAnimator.SetBool("Die", true);
+        characterAnimator.SetTrigger("Clicked");
+        yield return new WaitUntil(() => animationNormalizedTime > 0.9f);
+        if (isEnemy)
+        {
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            gameObject.SetActive(false);
+            SceneTransitionManager.Instance.SceneLoad("ResultScene");
+        }
+        Debug.Log("deadEnd");
+        ActionStates = ActionState.Dead;
+
     }
 
 
