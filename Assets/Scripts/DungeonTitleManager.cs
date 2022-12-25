@@ -12,6 +12,7 @@ public class DungeonTitleManager : MonoBehaviour
     private void Start()
     {
         DungeonSoundManager.Instance.PlayBGM(DungeonSoundManager.BGMType.DungeonTitleBGM);
+        DungeonScoreManager.Instance.DungeonScoreInit();
 
         startButton.onClick.AddListener( ()=> {
             SceneTransitionManager.Instance.SceneLoad("SampleScene");
