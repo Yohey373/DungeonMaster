@@ -14,6 +14,11 @@ public class DungeonScoreManager : SingletonMonoBehaviour<DungeonScoreManager>
         get { return dungeonScore; }
     }
 
+    public void DungeonScoreInit()
+    {
+        dungeonScore = 0;
+    }
+
     // 基本的にはこのメソッドを呼ぶことでスコアを加算していく
     public void AddDungeonScore(int addScore) {
         dungeonScore += addScore;

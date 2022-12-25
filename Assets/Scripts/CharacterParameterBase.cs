@@ -16,6 +16,11 @@ public class CharacterParameterBase: MonoBehaviour
         get { return HitPoint; }
     }
 
+    public float GetMaxHitPoint
+    {
+        get { return maxHitPoint; }
+    }
+
     public void Damage(float damagePoint) {
         this.HitPoint -= damagePoint;
         if (this.HitPoint < 0) {
